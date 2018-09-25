@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="todolist">
+        <div>
+            Enter:
+            <input v-model="valueText"/>
+            <button @click="update()">ADD</button>
+            <div>
+            Status: <span>{{ status }}</span>
+            </div>
+        </div>
+        <div>
+            <ul>
+                <li is="todo-component" v-for="(item,index) in items" :key="item.id" @remove="items.splice(index,1)" :title="item.title"></li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script>
+   var vm = new Vue({
+       el: '#todolist',
+       data:{
+           status: '',
+           valueText: '',
+           items: [
+               {id: 1,title:'name'},
+               {id: 2,title:'name'},
+           ],
+           length: 3
+       },
+       created: function(){
+           this.getDebounceStatus = _.debounce(this.setText,500);
+       },
+       components:{
+           'todo-component': {
+               props: ['title'],
+               template: `<li>
+               {{ title }}
+               <button @click="$emit('remove')"> X </button>
+               </li>`
+           }
+       },
+       watch:{
+           valueText: function(oldValueText,newValueText){
+               console.log(oldValueText,' ',newValueText)
+               this.status = 'typing';
+               this.getDebounceStatus();
+           }
+       },
+       methods:{
+           update: function(){
+               if (this.valueText.trim() === '') {
+                    alert('Not empty text');
+                    return;
+
+               }
+               this.items.push({
+                   id: this.length,
+                   title: this.valueText
+               })
+               this.length++;
+               this.valueText = '';
+           },
+           setText: function(){
+               this.status = '';
+           }
+       }
+   })
+</script>
+
+</html>

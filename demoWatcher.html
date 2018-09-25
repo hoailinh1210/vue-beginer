@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="watcher-example">
+       <p>
+       <input v-model="question">
+       </p>
+       <p>{{ answer }}</p>
+    </div>
+
+    <div id = 'a'>
+        <span v-for="n in 10">{{ n }} </span>
+    </div>
+</body>
+<script>
+    var vm1 = new Vue({
+        el: '#a'
+    })
+    var vm = new Vue({
+        el: '#watcher-example',
+        data:{
+            question: '',
+            answer:'No answer'
+        },
+        watch:{
+            question: function(newQuestion, oldQuestion){
+                console.log(newQuestion+' '+oldQuestion);
+                this.answer = 'Waiting....';
+                this.debouncedGetAnswer();
+            }
+        },
+        created: function(){
+            this.debouncedGetAnswer = _.debounce(this.getAnswer,500);
+        },
+        methods: {
+            getAnswer: function(){
+                if (this.question.indexOf('?') === -1){
+                    this.answer = `Dont't forget ?`;
+                    return ;
+                }
+                this.answer = 'thing ...';
+                console.log('ok');
+                var vm = this;
+                axios.get('https://yesno.wtf/api')
+                .then(function(response){
+                    vm.answer = response.data.answer;
+                })
+                .catch(err => vm.answer = 'error');
+            }
+        }
+    })
+</script>
+
+</html>
