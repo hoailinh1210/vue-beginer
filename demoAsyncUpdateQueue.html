@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+        <div id="example">{{ message }}</div>
+</body>
+<script>
+//     var vm = new Vue({
+//   el: '#example',
+//   data: {
+//     message: '123'
+//   }
+// })
+//     vm.message = 'new message' // change data
+//     console.log(vm.$el.textContent === 'new message') // false
+//     Vue.nextTick(function () {
+//      console.log(vm.$el.textContent === 'new message'); // true
+//     })
+Vue.component('example', {
+  template: '<span>{{ message }}</span>',
+  data: function () {
+    return {
+      message: 'not updated'
+    }
+  },
+  methods: {
+    updateMessage: function () {
+      this.message = 'updated'
+      console.log(this.$el.textContent) // => 'not updated'
+      this.$nextTick(function () {
+        console.log(this.$el.textContent) // => 'updated'
+      })
+    }
+  }
+})
+</script>
+
+</html>
